@@ -1,0 +1,23 @@
+{
+    "nations": [
+        {
+            "name": "Federal Republic of Earth",
+            "short_name": "Earth",
+            "adjective": "Earth",
+            "leader": "leader_default_earth",
+            "government_type": "government_type_republic",
+            "relations": {},
+            "traits": {}
+        },
+        {
+            "name": "Wutari Empire",
+            "short_name": "Wutara",
+            "adjective": "Wutari",
+            "leader": "leader_default_wutara",
+            "government_type": "government_type_imperial",
+            "relations": {},
+            "traits": {}
+        }
+        
+    ]
+}
