@@ -1,0 +1,1 @@
+pyuic5 -x FederationUI.ui -o ui.py
