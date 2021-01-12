@@ -32,30 +32,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
 
-        treeModel = QStandardItemModel()
-        rootNode = treeModel.invisibleRootItem()
+        tree_model = QStandardItemModel()
+        root_node = tree_model.invisibleRootItem()
 
         for nation in nations:
-            rootNode.appendRow(nation)
+            root_node.appendRow(nation)
 
-        self.NationTreeView.setModel(treeModel)
+        self.NationTreeView.setModel(tree_model)
         self.NationTreeView.expandAll()
-
-        VLayout = QVBoxLayout()
-        HLayout = QHBoxLayout()
-
-        VLayout.setContentsMargins(0,0,0,0)
-        HLayout.setContentsMargins(0,0,0,0)
-
-        HLayout.addWidget(self.tabWidget)
-        VLayout.addWidget(self.pushButton)
-        VLayout.addWidget(self.label)
-
-        HLayout.addLayout(VLayout)
-
-        mainWidget = QWidget()
-        mainWidget.setLayout(HLayout)
-        self.setCentralWidget(mainWidget)
 
 
 app = QApplication(sys.argv)
