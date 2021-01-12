@@ -2,7 +2,7 @@ import sys
 import json
 
 from PyQt5 import QtCore, QtGui, uic
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTreeView
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTreeView, QVBoxLayout, QHBoxLayout, QWidget
 from PyQt5.Qt import QStandardItemModel, QStandardItem
 
 sys.path.append("./Objects/")
@@ -40,7 +40,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.NationTreeView.setModel(treeModel)
         self.NationTreeView.expandAll()
-        
+
+        VLayout = QVBoxLayout()
+        HLayout = QHBoxLayout()
+
+        VLayout.setContentsMargins(0,0,0,0)
+        HLayout.setContentsMargins(0,0,0,0)
+
+        HLayout.addWidget(self.tabWidget)
+        VLayout.addWidget(self.pushButton)
+        VLayout.addWidget(self.label)
+
+        HLayout.addLayout(VLayout)
+
+        mainWidget = QWidget()
+        mainWidget.setLayout(HLayout)
+        self.setCentralWidget(mainWidget)
 
 
 app = QApplication(sys.argv)
