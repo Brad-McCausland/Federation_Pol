@@ -17,15 +17,6 @@
             "government_type": "government_type_imperial",
             "relations": {},
             "traits": {}
-        },
-        {
-            "name": "Wutari Empire",
-            "short_name": "Wuta",
-            "adjective": "Wutari",
-            "leader": "leader_default_wutara",
-            "government_type": "government_type_imperial",
-            "relations": {},
-            "traits": {}
         }
     ]
 }
