@@ -9,6 +9,7 @@ from PyQt5.Qt import QStandardItemModel, QStandardItem
 sys.path.append("./Objects/")
 from NationModel import NationModel
 from PopulationModel import PopulationModel
+from PopulationEnums import *
 
 QtDesignerFile = "FederationUi.ui"
 Ui_MainWindow, QtBaseClass = uic.loadUiType(QtDesignerFile)
@@ -43,6 +44,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.NationTreeView.setModel(tree_model)
 
         population = PopulationModel()
+
+        print(len(population.keySetForTags()))
         """
         totalEmployed = sum(population.data[0])
         totalUnemployed = sum(population.data[1])
