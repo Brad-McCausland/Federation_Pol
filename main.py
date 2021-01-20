@@ -9,7 +9,7 @@ from PyQt5.Qt import QStandardItemModel, QStandardItem
 sys.path.append("./Objects/")
 from NationModel import NationModel
 from PopulationModel import PopulationModel
-from PopulationEnums import *
+from PopulationMetrics import *
 
 QtDesignerFile = "FederationUi.ui"
 Ui_MainWindow, QtBaseClass = uic.loadUiType(QtDesignerFile)
@@ -45,20 +45,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         population = PopulationModel()
 
-        print(len(population.keySetForTags()))
-        """
-        totalEmployed = sum(population.data[0])
-        totalUnemployed = sum(population.data[1])
-        totalHumans = sum(population.data[0:len(population.data), 0])
-        totalWutari = sum(population.data[0:len(population.data), 1])
-        totalMixed = sum(population.data[0:len(population.data), 2])
-
-        self.NewsFeed.append("Total Humans: " + str(totalHumans))
-        self.NewsFeed.append("Total Wutari: " + str(totalWutari))
-        self.NewsFeed.append("Total Mixed: " + str(totalMixed))
-        self.NewsFeed.append("Total Employed: " + str(totalEmployed))
-        self.NewsFeed.append("Total Unemployed: " + str(totalUnemployed))
-        """
+        print(population.countForMetrics(POP_METRIC_SPECIES.HUMAN))
+        print(population.countForMetrics(POP_METRIC_APPROVAL.APPROVES))
+        print(population.countForMetrics(POP_METRIC_NATIONALITY.HUMAN))
+        print(population.countForMetrics(POP_METRIC_NATIONALITY.NORRIK))
 
 app = QApplication(sys.argv)
 win = MainWindow()
