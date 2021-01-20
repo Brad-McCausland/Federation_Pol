@@ -11,6 +11,8 @@ from NationModel import NationModel
 from PopulationModel import PopulationModel
 from PopulationMetrics import *
 
+from MashMap import MashMap
+
 QtDesignerFile = "FederationUi.ui"
 Ui_MainWindow, QtBaseClass = uic.loadUiType(QtDesignerFile)
 
@@ -44,11 +46,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.NationTreeView.setModel(tree_model)
 
         population = PopulationModel()
+        mashMap = MashMap(POP_METRIC_AGE, POP_METRIC_NATIONALITY)
+        mashMap.setValueForMetrics(100, POP_METRIC_AGE.POP_20_UNDER, POP_METRIC_NATIONALITY.HUMAN)
+        mashMap.setValueForMetrics(200, POP_METRIC_AGE.POP_20_UNDER, POP_METRIC_NATIONALITY.WUTARI)
+        mashMap.setValueForMetrics(600, POP_METRIC_AGE.POP_71_OVER, POP_METRIC_NATIONALITY.HUMAN)
 
-        print(population.countForMetrics(POP_METRIC_SPECIES.HUMAN))
-        print(population.countForMetrics(POP_METRIC_APPROVAL.APPROVES))
-        print(population.countForMetrics(POP_METRIC_NATIONALITY.HUMAN))
-        print(population.countForMetrics(POP_METRIC_NATIONALITY.NORRIK))
+        print(mashMap.totalCountForMetrics(POP_METRIC_NATIONALITY.HUMAN))
+        print(mashMap.totalCountForMetrics(POP_METRIC_AGE.POP_20_UNDER))
+        print(mashMap.totalCountForMetrics(POP_METRIC_AGE.POP_71_OVER, POP_METRIC_NATIONALITY.HUMAN))
 
 app = QApplication(sys.argv)
 win = MainWindow()
