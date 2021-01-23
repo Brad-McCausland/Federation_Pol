@@ -51,9 +51,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         mashMap.setValueForMetrics(200, POP_METRIC_AGE.POP_20_UNDER, POP_METRIC_NATIONALITY.WUTARI)
         mashMap.setValueForMetrics(600, POP_METRIC_AGE.POP_71_OVER, POP_METRIC_NATIONALITY.HUMAN)
 
-        print(mashMap.totalCountForMetrics(POP_METRIC_NATIONALITY.HUMAN))
-        print(mashMap.totalCountForMetrics(POP_METRIC_AGE.POP_20_UNDER))
-        print(mashMap.totalCountForMetrics(POP_METRIC_AGE.POP_71_OVER, POP_METRIC_NATIONALITY.HUMAN))
+        print(mashMap.countForMetrics(POP_METRIC_NATIONALITY.HUMAN))
+        print(mashMap.countForMetrics(POP_METRIC_AGE.POP_20_UNDER))
+        print(mashMap.countForMetrics(POP_METRIC_AGE.POP_71_OVER, POP_METRIC_NATIONALITY.HUMAN))
 
 app = QApplication(sys.argv)
 win = MainWindow()
