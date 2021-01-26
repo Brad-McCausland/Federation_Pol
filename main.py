@@ -9,6 +9,7 @@ from PyQt5.Qt import QStandardItemModel, QStandardItem
 sys.path.append("./Objects/")
 from NationModel import NationModel
 from PopulationModel import PopulationModel
+from PopulationViewController import PopulationViewController
 from PopulationMetrics import *
 
 from MashMap import MashMap
@@ -44,16 +45,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             root_node.appendRow(nation)
 
         self.NationTreeView.setModel(tree_model)
+        
+        popModel = PopulationModel()
+        popModel.setValueForMetrics(20, POP_METRIC_SPECIES.HUMAN, POP_METRIC_NATIONALITY.HUMAN, POP_METRIC_EMPLOYMENT.ACADEMIC, POP_METRIC_SOCIOECO.LOWER, POP_METRIC_AGE.POP_20_UNDER, POP_METRIC_BELIEFS.CENTER_LEFT, POP_METRIC_APPROVAL.APPROVES)
+        popModel.setValueForMetrics(50, POP_METRIC_SPECIES.LUVERAN, POP_METRIC_NATIONALITY.HUMAN, POP_METRIC_EMPLOYMENT.ACADEMIC, POP_METRIC_SOCIOECO.LOWER, POP_METRIC_AGE.POP_20_UNDER, POP_METRIC_BELIEFS.CENTER_LEFT, POP_METRIC_APPROVAL.APPROVES)
+        view = PopulationViewController(popModel)
 
-        population = PopulationModel()
-        mashMap = MashMap(POP_METRIC_AGE, POP_METRIC_NATIONALITY)
-        mashMap.setValueForMetrics(100, POP_METRIC_AGE.POP_20_UNDER, POP_METRIC_NATIONALITY.HUMAN)
-        mashMap.setValueForMetrics(200, POP_METRIC_AGE.POP_20_UNDER, POP_METRIC_NATIONALITY.WUTARI)
-        mashMap.setValueForMetrics(600, POP_METRIC_AGE.POP_71_OVER, POP_METRIC_NATIONALITY.HUMAN)
-
-        print(mashMap.countForMetrics(POP_METRIC_NATIONALITY.HUMAN))
-        print(mashMap.countForMetrics(POP_METRIC_AGE.POP_20_UNDER))
-        print(mashMap.countForMetrics(POP_METRIC_AGE.POP_71_OVER, POP_METRIC_NATIONALITY.HUMAN))
+        ######### ADD SUB-WIDGETS USING THIS SCHEME FOR SOME REASON #########
+        layout = QVBoxLayout(self.DetailsView)
+        layout.addWidget(view)
+        #####################################################################
 
 app = QApplication(sys.argv)
 win = MainWindow()
