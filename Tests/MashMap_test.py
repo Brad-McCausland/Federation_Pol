@@ -164,7 +164,15 @@ class MashMapTests(unittest.TestCase):
 
 ################### end test exceptions ###################
 
-################### test exceptions ###################
+################### test fault tolerance ###################
+    def test_metric_order_doesnt_matter(self):
+        mashmap = MashMap.MashMap(ENUM_SPECIES, ENUM_JOB)
+        mashmap.setValueForMetrics(1, ENUM_SPECIES.CARDASSIAN, ENUM_JOB.ADMIN)
+        self.assertTrue(mashmap.countForMetrics(ENUM_SPECIES.CARDASSIAN, ENUM_JOB.ADMIN) == 1)
+        self.assertTrue(mashmap.countForMetrics(ENUM_JOB.ADMIN, ENUM_SPECIES.CARDASSIAN) == 1)
+################### end test fault tolerance ###################
+
+################### test operations ###################
 
     # A new mashmap should have no data
     def test_empty_mashmap_empty(self):
@@ -192,18 +200,43 @@ class MashMapTests(unittest.TestCase):
         mashmap.setValueForMetrics(1, ENUM_SPECIES.KLINGON,  ENUM_FOOD.LEOLA_ROOT, ENUM_JOB.VEDEC)
         mashmap.setValueForMetrics(1, ENUM_SPECIES.TALAXIAN, ENUM_FOOD.KANAR, ENUM_JOB.ADMIN)
         mashmap.setValueForMetrics(1, ENUM_SPECIES.BAJORAN,  ENUM_FOOD.HASPERAT, ENUM_JOB.VEDEC)
-        mashmap.setValueForMetrics(1, ENUM_SPECIES.CARDASSIAN, ENUM_FOOD.KANAR, ENUM_JOB.ADMIN)
+        mashmap.setValueForMetrics(2, ENUM_SPECIES.CARDASSIAN, ENUM_FOOD.KANAR, ENUM_JOB.ADMIN)
 
+        # One metric
         self.assertTrue(mashmap.countForMetrics(ENUM_SPECIES.TALAXIAN) == 4)
         self.assertTrue(mashmap.countForMetrics(ENUM_SPECIES.BAJORAN)  == 1)
         self.assertTrue(mashmap.countForMetrics(ENUM_FOOD.LEOLA_ROOT)  == 3)
-        self.assertTrue(mashmap.countForMetrics(ENUM_FOOD.KANAR)  == 2)
-        self.assertTrue(mashmap.countForMetrics(ENUM_JOB.ADMIN) == 3)
+        self.assertTrue(mashmap.countForMetrics(ENUM_FOOD.KANAR) == 3)
+        self.assertTrue(mashmap.countForMetrics(ENUM_JOB.ADMIN) == 4)
         self.assertTrue(mashmap.countForMetrics(ENUM_JOB.VEDEC) == 2)
 
+        # Two metrics
         self.assertTrue(mashmap.countForMetrics(ENUM_SPECIES.TALAXIAN, ENUM_FOOD.LEOLA_ROOT) == 2)
         self.assertTrue(mashmap.countForMetrics(ENUM_SPECIES.TALAXIAN, ENUM_JOB.ADMIN) == 2)
         self.assertTrue(mashmap.countForMetrics(ENUM_FOOD.GAGH, ENUM_JOB.WARRIOR) == 2)
+
+        # Three metrics
+        self.assertTrue(mashmap.countForMetrics(ENUM_SPECIES.BAJORAN,  ENUM_FOOD.HASPERAT, ENUM_JOB.VEDEC) == 1)
+        self.assertTrue(mashmap.countForMetrics(ENUM_SPECIES.CARDASSIAN, ENUM_FOOD.KANAR, ENUM_JOB.ADMIN) == 2)
+
+    def test_migration_operations(self):
+        mashmap = MashMap.MashMap(ENUM_SPECIES, ENUM_JOB)
+        mashmap.setValueForMetrics(6, ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR)
+        mashmap.setValueForMetrics(3, ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC)
+
+        mashmap.migrateValuesForMetrics(1, [ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR], [ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC])
+        self.assertTrue(mashmap.countForMetrics(ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR) == 5)
+        self.assertTrue(mashmap.countForMetrics(ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC) == 4)
+
+        mashmap.migrateValuesForMetrics(2, [ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC], [ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR])
+        self.assertTrue(mashmap.countForMetrics(ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR) == 7)
+        self.assertTrue(mashmap.countForMetrics(ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC) == 2)
+
+        # Verify can't reduce count below zero
+        mashmap.migrateValuesForMetrics(10, [ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC], [ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR])
+        self.assertTrue(mashmap.countForMetrics(ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR) == 9)
+        self.assertTrue(mashmap.countForMetrics(ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC) == 0)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -21,6 +21,7 @@ class MashMap():
                 # Accept ints as metrics? Objects?
 
         self.data = {} #TODO: Accept popData if not null
+        self.negativeAllowed = False # TODO: make optional?
 
     # Return total count for all keys that comply with given metrics. Incomplete list of metrics is acceptable.
     def countForMetrics(self, *metrics):
@@ -36,6 +37,8 @@ class MashMap():
 
     # Define the value for a slice. Requires a complete list of metrics
     def setValueForMetrics(self, value, *metrics):
+        if not (self.negativeAllowed) and value < 0:
+            raise ValueError("Value cannot be set to a negative number")
         if len(metrics) != len(self.metrics):
             raise ValueError("To set values, a complete list of metrics must be specified")
 
@@ -43,7 +46,7 @@ class MashMap():
         key = "".join(key)
         self.data[key] = value
 
-    # Modify the value of a slice by addition. Value can be negative
+    # Modify the value of a slice by addition. Value can be negative. Returns effective change in value, which may differ from input if value would be brought below zero.
     def modifyValueForMetrics(self, value, *metrics):
         if len(metrics) != len(self.metrics):
             raise ValueError("To modify values, a complete list of metrics must be specified")
@@ -51,10 +54,20 @@ class MashMap():
         key = self.generateBaseKeyFromMetrics(*metrics)
         key = "".join(key)
 
+        currentVal = 0
         try:
-            self.data[key] = self.data[key] + value
+            currentVal = self.data[key]
         except KeyError:
-            self.data[key] = value
+            self.data[key] = 0
+
+        newVal = currentVal + value
+        if newVal < 0 and not self.negativeAllowed:
+            self.data[key] = 0
+            return currentVal * -1
+        else:
+            self.data[key] = newVal
+            return value
+
 
     # Subtract value from slice defined in fromMetrics, and add value to slice defined by toMetrics. Both metrics must be given as lists to delineate to and from.
     def migrateValuesForMetrics(self, value, fromMetrics, toMetrics):
@@ -64,14 +77,10 @@ class MashMap():
             raise TypeError("Cannot migrate a negative number between two slices!")
         if len(fromMetrics) != len(self.metrics) or len(toMetrics) != len(self.metrics):
             raise ValueError("To migrate values, a complete list of metrics must be specified")
-
-        fromKey = self.generateBaseKeyFromMetrics(*fromMetrics)
-        toKey = self.generateBaseKeyFromMetrics(*toMetrics)
-        fromKey = "".join(fromKey)
-        toKey = "".join(toKey)
-
-        self.data[fromKey] = self.data[fromKey] - value
-        self.data[toKey] = self.data[toKey] + value
+        
+        # First subtract from 'from' cell, then add to 'to' cell whatever was removed
+        effectiveChange = self.modifyValueForMetrics(-1 * value, *fromMetrics)
+        self.modifyValueForMetrics( -1 * effectiveChange, *toMetrics)
 
     # Enumerate and return list of all possible keys that conform to the given metrics: "111111*" -> ["1111111", "1111112"]
     def completeKeySetForMetrics(self, *metrics):
