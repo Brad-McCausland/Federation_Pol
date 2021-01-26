@@ -165,11 +165,13 @@ class MashMapTests(unittest.TestCase):
 ################### end test exceptions ###################
 
 ################### test fault tolerance ###################
+
     def test_metric_order_doesnt_matter(self):
         mashmap = MashMap.MashMap(ENUM_SPECIES, ENUM_JOB)
         mashmap.setValueForMetrics(1, ENUM_SPECIES.CARDASSIAN, ENUM_JOB.ADMIN)
         self.assertTrue(mashmap.countForMetrics(ENUM_SPECIES.CARDASSIAN, ENUM_JOB.ADMIN) == 1)
         self.assertTrue(mashmap.countForMetrics(ENUM_JOB.ADMIN, ENUM_SPECIES.CARDASSIAN) == 1)
+
 ################### end test fault tolerance ###################
 
 ################### test operations ###################
@@ -218,6 +220,12 @@ class MashMapTests(unittest.TestCase):
         # Three metrics
         self.assertTrue(mashmap.countForMetrics(ENUM_SPECIES.BAJORAN,  ENUM_FOOD.HASPERAT, ENUM_JOB.VEDEC) == 1)
         self.assertTrue(mashmap.countForMetrics(ENUM_SPECIES.CARDASSIAN, ENUM_FOOD.KANAR, ENUM_JOB.ADMIN) == 2)
+        
+        # Verify empty cells
+        self.assertTrue(mashmap.countForMetrics(ENUM_SPECIES.BAJORAN, ENUM_FOOD.GAGH) == 0)
+        self.assertTrue(mashmap.countForMetrics(ENUM_FOOD.GAGH, ENUM_JOB.CHEF) == 0)
+        self.assertTrue(mashmap.countForMetrics(ENUM_SPECIES.KLINGON, ENUM_JOB.ADMIN) == 0)
+
 
     def test_migration_operations(self):
         mashmap = MashMap.MashMap(ENUM_SPECIES, ENUM_JOB)

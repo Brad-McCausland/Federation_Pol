@@ -1,11 +1,10 @@
 from enum import Enum
 
-# TODO: cache frequent queries to improve performance?
 # self.data is dict.
 # Key: A string of seven numbers "#######" representing a combination of the seven demographic metrics. The numbers come from their specific metric's enum value.
 # Value: The numbers of beings in the population who conform to the combination of metrics defined by the key.
 # Cell: a single key/value pair.
-# Slice: an area of cells defined by set of metrics. A slice defined by a complete set of metrics will be one cell large. A slice defined by the empty set will contains all cells in the mashmap.
+# Slice: a set of cells defined by set of metrics. A slice defined by a complete set of metrics will be one cell large. A slice defined by the empty set will contains all cells in the mashmap.
 
 # The Mashmap is more efficient than a database or list of individuals with tags when the number of individuals is large and the number of categories is small.
 # Categories is a list of enums that are used to define the scope of the mashmap.
