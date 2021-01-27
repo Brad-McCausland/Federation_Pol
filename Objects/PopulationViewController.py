@@ -17,7 +17,9 @@ class PopulationViewController(QDialog):
     # Metric is one of the 7 metrics used to categorize a population slice
     def generateDataForMetric(self, metric):
         data = []
-        for category in metric:
-            data.append([category.name, self.populationModel.countForMetrics(category)])
+        for cluster in metric:
+            count = self.populationModel.countForMetrics(cluster)
+            if count > 0:
+                data.append([cluster.name, count])
 
         return data

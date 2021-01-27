@@ -1,6 +1,7 @@
 # File which defines population metric enums and an abstract class which stores metric metadata as static properties.
-# A metric, defined here as enums, is a way of categorizing individuals and population segments.
-# An individual or group must have all seven metrics defined. Partial or null values are not allowed.
+# A metric is an enum. Each and every individual can be fully described by a combination of the seven metrics.
+# A cluster is a specific value for a metric. The approval metric has two clusters. Individuals are defined by their clusters, not metrics
+# An individual or group must have one cluster for seven metrics defined. Partial or null values are not allowed.
 
 from enum import Enum
 
@@ -11,8 +12,8 @@ class PopulationMetrics():
     # Total number of metrics defined in this file
     TOTAL_METRIC_COUNT = 7
 
-    # Number of different values for each metric
-    MEMBER_METRIC_COUNTS = [6, 6, 9, 6, 7, 9, 2]
+    # Number of different clusters for each metric
+    METRIC_CLUSTER_COUNTS = [6, 6, 9, 6, 7, 9, 2]
 
 # TODO: add generic enums to accomodate randomly generated species?
 class POP_METRIC_SPECIES(Enum):
