@@ -68,15 +68,21 @@ class MashMap():
             return value
 
 
-    # Subtract value from slice defined in fromClusters, and add value to slice defined by toClusters. Both sets must be given as lists to delineate to and from.
+    # Subtract value from slice defined in fromClusters, and add value to slice defined by toClusters. If value is between 0 and 1, interpret as a percentage of current value.
+    # Both sets must be given as lists to delineate to and from.
     def migrateValuesForClusters(self, value, fromClusters, toClusters):
-        if not isinstance(value, int):
+        if not isinstance(value, int) and not (value > 0 and value < 1):
             raise TypeError("Cannot migrate a non-integer between two slices!")
         if not value > 0:
             raise TypeError("Cannot migrate a negative number between two slices!")
         if len(fromClusters) != len(self.metrics) or len(toClusters) != len(self.metrics):
             raise ValueError("To migrate values, a complete list of clusters must be specified")
         
+        # Reset 
+        if value > 0 and value < 1:
+            value = value * self.countForClusters(*fromClusters)
+            value = int(round(value))
+
         # First subtract from 'from' cell, then add to 'to' cell whatever was removed
         effectiveChange = self.modifyValueForClusters(-1 * value, *fromClusters)
         self.modifyValueForClusters( -1 * effectiveChange, *toClusters)

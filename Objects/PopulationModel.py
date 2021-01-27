@@ -40,8 +40,9 @@ class PopulationModel(QStandardItemModel):
     def migrateValuesForClusters(self, value, fromClusters, toClusters):
         self.data.migrateValuesForClusters(value, fromClusters, toClusters)
 
-    # Migrate individuals away from the 
-    #def biDirectionalRepulsion(self, clusters)
+    # Migrate a portion of individuals defined by 'strength' away from the named cluster in both directions. Restrict movement to given restricted clusters if defined.
+    #def biDirectionalRepulsion(self, cluster, strength, wrapping=False, restrictedClusters=[]):
+        
 
     # Parameters is a tuple. The first element 
     def newRandomMashMap(self, parameters):

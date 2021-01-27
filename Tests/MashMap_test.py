@@ -230,21 +230,34 @@ class MashMapTests(unittest.TestCase):
     def test_migration_operations(self):
         mashmap = MashMap.MashMap(ENUM_SPECIES, ENUM_JOB)
         mashmap.setValueForClusters(6, ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR)
-        mashmap.setValueForClusters(3, ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC)
+        mashmap.setValueForClusters(10, ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC)
 
+        # verify whole integer operations
         mashmap.migrateValuesForClusters(1, [ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR], [ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC])
         self.assertTrue(mashmap.countForClusters(ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR) == 5)
-        self.assertTrue(mashmap.countForClusters(ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC) == 4)
+        self.assertTrue(mashmap.countForClusters(ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC) == 11)
 
         mashmap.migrateValuesForClusters(2, [ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC], [ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR])
         self.assertTrue(mashmap.countForClusters(ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR) == 7)
-        self.assertTrue(mashmap.countForClusters(ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC) == 2)
+        self.assertTrue(mashmap.countForClusters(ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC) == 9)
 
         # Verify can't reduce count below zero
-        mashmap.migrateValuesForClusters(10, [ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC], [ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR])
-        self.assertTrue(mashmap.countForClusters(ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR) == 9)
+        mashmap.migrateValuesForClusters(12, [ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC], [ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR])
+        self.assertTrue(mashmap.countForClusters(ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR) == 16)
         self.assertTrue(mashmap.countForClusters(ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC) == 0)
 
+        # verify proportional operations
+        mashmap.migrateValuesForClusters(0.5, [ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR], [ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC])
+        self.assertTrue(mashmap.countForClusters(ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR) == 8)
+        self.assertTrue(mashmap.countForClusters(ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC) == 8)
+        
+        mashmap.migrateValuesForClusters(0.75, [ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC], [ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR])
+        self.assertTrue(mashmap.countForClusters(ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR) == 14)
+        self.assertTrue(mashmap.countForClusters(ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC) == 2)
+        
+        mashmap.migrateValuesForClusters(0.999, [ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR], [ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC])
+        self.assertTrue(mashmap.countForClusters(ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR) == 0)
+        self.assertTrue(mashmap.countForClusters(ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC) == 16)
 
 if __name__ == '__main__':
     unittest.main()
