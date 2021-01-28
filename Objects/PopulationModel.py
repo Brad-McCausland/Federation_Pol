@@ -40,8 +40,25 @@ class PopulationModel(QStandardItemModel):
     def migrateValuesForClusters(self, value, fromClusters, toClusters):
         self.data.migrateValuesForClusters(value, fromClusters, toClusters)
 
-    # Migrate a portion of individuals defined by 'strength' away from the named cluster in both directions. Restrict movement to given restricted clusters if defined.
-    #def biDirectionalRepulsion(self, cluster, strength, wrapping=False, restrictedClusters=[]):
+    """
+    # Migrate individuals away from the specified cluster in both directions. Should only be used on metrics that represent a gradient where adjacent clusters are related.
+    # Strength is a number between 0 and 1. Strength 0 has no effect. Strength 1 completely empties the target cluster.
+    def biDirectionalRepulsion(self, cluster, strength, wrapping=False, restrictedClusters=[]):
+        if not (strength >= 0 and strength <= 1):
+            raise ValueError("Strength must be between or equal to 0 or 1")
+
+        clusterSets = self.completeClusterSetForClusters(cluster, *restrictedClusters)
+        targetIndex = self.indexOfCluster(cluster)
+
+        # Reduce value for each cell specified in input
+        for clusterSet in clusterSets:
+            # And redistribute among adjacent cells
+            for i in range(len(self.metrics[targetIndex])):
+                migrateAmount = strength / abs(targetIndex - i)
+                migrateTargetKey = key
+                migrateTargetKey[targetIndex] = i
+                self.migrateValuesForClusters(migrateAmount)
+    """
         
 
     # Parameters is a tuple. The first element 

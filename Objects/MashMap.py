@@ -41,8 +41,7 @@ class MashMap():
         if len(clusters) != len(self.metrics):
             raise ValueError("To set values, a complete list of clusters must be specified")
 
-        key = self.generateBaseKeyFromClusters(*clusters)
-        key = "".join(key)
+        key = self.generateKeyFromClusters(*clusters)
         self.data[key] = value
 
     # Modify the value of a slice by addition. Value can be negative. Returns effective change in value, which may differ from input if value would be brought below zero.
@@ -50,8 +49,7 @@ class MashMap():
         if len(clusters) != len(self.metrics):
             raise ValueError("To modify values, a complete list of clusters must be specified")
 
-        key = self.generateBaseKeyFromClusters(*clusters)
-        key = "".join(key)
+        key = self.generateKeyFromClusters(*clusters)
 
         currentVal = 0
         try:
@@ -87,10 +85,36 @@ class MashMap():
         effectiveChange = self.modifyValueForClusters(-1 * value, *fromClusters)
         self.modifyValueForClusters( -1 * effectiveChange, *toClusters)
 
-    # Enumerate and return list of all possible keys that conform to the given clusters: "111111*" -> ["1111111", "1111112"]
+    # Enumerate and return list of all possible lists of clusters that conform to the given clusters
+    def completeClusterSetForClusters(self, *clusters):
+
+        allClusterSets = []
+        baseClusterSet = []
+
+        # Start by adding base set of clusters at index 0. Clusters left blank are None type
+        for cluster in clusters:
+            baseClusterSet = [None]*len(self.metrics)
+            baseClusterSet[self.indexOfCluster(cluster)] = cluster
+            allClusterSets.append(baseClusterSet)
+
+        for i in range(0, len(self.metrics)):
+            if (baseClusterSet[i] is None):
+                newClusterSets = []
+
+                for clusterSet in allClusterSets:
+                    for cluster in self.metrics[i]:
+                        newClusterSet = clusterSet.copy()
+                        newClusterSet[i] = cluster
+                        newClusterSets.append(newClusterSet)
+
+                    allClusterSets = newClusterSets
+
+        return allClusterSets
+
+    # Enumerate and return list of all possible keys that conform to the given clusters: 111111* (as enums) -> ["1111111", "1111112"]
     def completeKeySetForClusters(self, *clusters):
 
-        baseKey = self.generateBaseKeyFromClusters(*clusters)
+        baseKey = self.generateKeyFromClusters(*clusters)
         allKeys = [baseKey]
 
         # For each index in a key
@@ -103,8 +127,7 @@ class MashMap():
                 # Combine all current possible keys with all possible values of current index to generate new list of possible keys
                 for key in allKeys:
                     for j in range(1, len(self.metrics[i]) + 1): # TODO: Rewrite as for/each loop
-                        newKey = key.copy()
-                        newKey[i] = str(j)
+                        newKey = key[:i] + str(j) + key[i + 1:]
                         newKeys.append(newKey)
 
                     # Replace previous iteration of keys. No keys in output should have '*'
@@ -113,13 +136,25 @@ class MashMap():
         return allKeys
             
     # Generate a unique, ordered key for an arbitrary list of clusters. Unspecified metrics are left as wildcards.
-    def generateBaseKeyFromClusters(self, *clusters):
+    def generateKeyFromClusters(self, *clusters):
         key = ["*"]*len(self.metrics)
 
         for cluster in clusters:
             index = self.indexOfCluster(cluster)
             key[index] = cluster.value
         
+        key = "".join(key)
+        return key
+        
+    # Generate a list of clusters from a key. Wildcards are skipped.
+    def generateClustersFromKey(self, key):
+        clusters = []
+        for i in range(len(key)):
+            if key[i] == "*":
+                continue
+            else:
+                clusters.append(self.metrics[i][key[i]])
+                
         return key
     
     # Return index in key for cluster of given type. Strict ordering is important to prevent collisions/duplications.

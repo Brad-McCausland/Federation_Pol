@@ -2,6 +2,8 @@ import unittest
 from enum import Enum
 from Objects import MashMap
 
+# TALAXIAN, BAJORAN, KLINGON, CARDASSIAN | LEOLA_ROOT, HASPERAT, GAGH, KANAR | CHEF, VEDEC, WARRIOR, ADMIN
+
 class ENUM_SPECIES(Enum):
     TALAXIAN = "1"
     BAJORAN = "2"
@@ -174,6 +176,115 @@ class MashMapTests(unittest.TestCase):
 
 ################### end test fault tolerance ###################
 
+################### test helper methods ###################
+
+    def test_generate_key_from_clusters(self):
+        mashmap = MashMap.MashMap(ENUM_SPECIES)
+        self.assertTrue(mashmap.generateKeyFromClusters(ENUM_SPECIES.CARDASSIAN) == "4")
+        
+        mashmap = MashMap.MashMap(ENUM_SPECIES, ENUM_JOB)
+        self.assertTrue(mashmap.generateKeyFromClusters(ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR) == "23")
+        self.assertTrue(mashmap.generateKeyFromClusters(ENUM_JOB.WARRIOR, ENUM_SPECIES.BAJORAN) == "23")
+        self.assertTrue(mashmap.generateKeyFromClusters(ENUM_SPECIES.BAJORAN) == "2*")
+        self.assertTrue(mashmap.generateKeyFromClusters(ENUM_JOB.WARRIOR,) == "*3")
+
+        mashmap = MashMap.MashMap(ENUM_SPECIES, ENUM_FOOD, ENUM_JOB)
+        self.assertTrue(mashmap.generateKeyFromClusters(ENUM_SPECIES.BAJORAN, ENUM_FOOD.LEOLA_ROOT, ENUM_JOB.WARRIOR) == "213")
+        self.assertTrue(mashmap.generateKeyFromClusters(ENUM_FOOD.LEOLA_ROOT, ENUM_JOB.WARRIOR) == "*13")
+        self.assertTrue(mashmap.generateKeyFromClusters(ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR) == "2*3")
+        self.assertTrue(mashmap.generateKeyFromClusters(ENUM_FOOD.LEOLA_ROOT, ENUM_JOB.WARRIOR) == "*13")
+        
+        self.assertTrue(mashmap.generateKeyFromClusters(ENUM_JOB.WARRIOR, ENUM_FOOD.LEOLA_ROOT, ENUM_SPECIES.BAJORAN) == "213")
+
+        self.assertTrue(mashmap.generateKeyFromClusters(ENUM_JOB.WARRIOR) == "**3")
+
+    def test_generate_key_set_from_clusters(self):
+        mashmap = MashMap.MashMap(ENUM_SPECIES)
+        self.assertTrue(mashmap.completeKeySetForClusters(ENUM_SPECIES.CARDASSIAN) == ["4"])
+        
+        mashmap = MashMap.MashMap(ENUM_SPECIES, ENUM_JOB)
+        set1 = mashmap.completeKeySetForClusters(ENUM_SPECIES.BAJORAN)
+        self.assertTrue("21" in set1)
+        self.assertTrue("22" in set1)
+        self.assertTrue("23" in set1)
+        self.assertTrue("24" in set1)
+
+        set2 = mashmap.completeKeySetForClusters(ENUM_JOB.VEDEC)
+        self.assertTrue(len(set2) == 4)
+        self.assertTrue("12" in set2)
+        self.assertTrue("22" in set2)
+        self.assertTrue("32" in set2)
+        self.assertTrue("42" in set2)
+
+
+        mashmap = MashMap.MashMap(ENUM_SPECIES, ENUM_FOOD, ENUM_JOB)
+        set3 = mashmap.completeKeySetForClusters(ENUM_FOOD.GAGH)
+
+        self.assertTrue(len(set3) == 16)
+        self.assertTrue("131" in set3)
+        self.assertTrue("132" in set3)
+        self.assertTrue("133" in set3)
+        self.assertTrue("134" in set3)
+
+        self.assertTrue("231" in set3)
+        self.assertTrue("232" in set3)
+        self.assertTrue("233" in set3)
+        self.assertTrue("234" in set3)
+
+        self.assertTrue("331" in set3)
+        self.assertTrue("332" in set3)
+        self.assertTrue("333" in set3)
+        self.assertTrue("334" in set3)
+
+        self.assertTrue("431" in set3)
+        self.assertTrue("432" in set3)
+        self.assertTrue("433" in set3)
+        self.assertTrue("434" in set3)
+
+    def test_generate_cluster_sets_from_clusters(self):
+        mashmap = MashMap.MashMap(ENUM_SPECIES)
+        self.assertTrue(mashmap.completeClusterSetforClusters(ENUM_SPECIES.CARDASSIAN) == [[ENUM_SPECIES.CARDASSIAN]])
+        
+        mashmap = MashMap.MashMap(ENUM_SPECIES, ENUM_JOB)
+        set1 = mashmap.completeClusterSetforClusters(ENUM_SPECIES.BAJORAN)
+        self.assertTrue([ENUM_SPECIES.BAJORAN, ENUM_JOB.CHEF] in set1)
+        self.assertTrue([ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC] in set1)
+        self.assertTrue([ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR] in set1)
+        self.assertTrue([ENUM_SPECIES.BAJORAN, ENUM_JOB.ADMIN] in set1)
+
+        set2 = mashmap.completeClusterSetforClusters(ENUM_JOB.VEDEC)
+        self.assertTrue(len(set2) == 4)
+        self.assertTrue([ENUM_SPECIES.TALAXIAN, ENUM_JOB.VEDEC] in set2)
+        self.assertTrue([ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC] in set2)
+        self.assertTrue([ENUM_SPECIES.KLINGON, ENUM_JOB.VEDEC] in set2)
+        self.assertTrue([ENUM_SPECIES.CARDASSIAN, ENUM_JOB.VEDEC] in set2)
+
+
+        mashmap = MashMap.MashMap(ENUM_SPECIES, ENUM_FOOD, ENUM_JOB)
+        set3 = mashmap.completeClusterSetforClusters(ENUM_FOOD.GAGH)
+
+        self.assertTrue(len(set3) == 16)
+        self.assertTrue([ENUM_SPECIES.TALAXIAN, ENUM_FOOD.GAGH, ENUM_JOB.CHEF] in set3)
+        self.assertTrue([ENUM_SPECIES.TALAXIAN, ENUM_FOOD.GAGH, ENUM_JOB.VEDEC] in set3)
+        self.assertTrue([ENUM_SPECIES.TALAXIAN, ENUM_FOOD.GAGH, ENUM_JOB.WARRIOR] in set3)
+        self.assertTrue([ENUM_SPECIES.TALAXIAN, ENUM_FOOD.GAGH, ENUM_JOB.ADMIN] in set3)
+
+        self.assertTrue([ENUM_SPECIES.BAJORAN, ENUM_FOOD.GAGH, ENUM_JOB.CHEF] in set3)
+        self.assertTrue([ENUM_SPECIES.BAJORAN, ENUM_FOOD.GAGH, ENUM_JOB.VEDEC] in set3)
+        self.assertTrue([ENUM_SPECIES.BAJORAN, ENUM_FOOD.GAGH, ENUM_JOB.WARRIOR] in set3)
+        self.assertTrue([ENUM_SPECIES.BAJORAN, ENUM_FOOD.GAGH, ENUM_JOB.ADMIN] in set3)
+
+        self.assertTrue([ENUM_SPECIES.KLINGON, ENUM_FOOD.GAGH, ENUM_JOB.CHEF] in set3)
+        self.assertTrue([ENUM_SPECIES.KLINGON, ENUM_FOOD.GAGH, ENUM_JOB.VEDEC] in set3)
+        self.assertTrue([ENUM_SPECIES.KLINGON, ENUM_FOOD.GAGH, ENUM_JOB.WARRIOR] in set3)
+        self.assertTrue([ENUM_SPECIES.KLINGON, ENUM_FOOD.GAGH, ENUM_JOB.ADMIN] in set3)
+
+        self.assertTrue([ENUM_SPECIES.CARDASSIAN, ENUM_FOOD.GAGH, ENUM_JOB.CHEF] in set3)
+        self.assertTrue([ENUM_SPECIES.CARDASSIAN, ENUM_FOOD.GAGH, ENUM_JOB.VEDEC] in set3)
+        self.assertTrue([ENUM_SPECIES.CARDASSIAN, ENUM_FOOD.GAGH, ENUM_JOB.WARRIOR] in set3)
+        self.assertTrue([ENUM_SPECIES.CARDASSIAN, ENUM_FOOD.GAGH, ENUM_JOB.ADMIN] in set3)
+################### end test helper methods ###################
+
 ################### test operations ###################
 
     # A new mashmap should have no data
@@ -225,7 +336,6 @@ class MashMapTests(unittest.TestCase):
         self.assertTrue(mashmap.countForClusters(ENUM_SPECIES.BAJORAN, ENUM_FOOD.GAGH) == 0)
         self.assertTrue(mashmap.countForClusters(ENUM_FOOD.GAGH, ENUM_JOB.CHEF) == 0)
         self.assertTrue(mashmap.countForClusters(ENUM_SPECIES.KLINGON, ENUM_JOB.ADMIN) == 0)
-
 
     def test_migration_operations(self):
         mashmap = MashMap.MashMap(ENUM_SPECIES, ENUM_JOB)
