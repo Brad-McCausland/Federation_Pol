@@ -76,7 +76,6 @@ class MashMap():
         if len(fromClusters) != len(self.metrics) or len(toClusters) != len(self.metrics):
             raise ValueError("To migrate values, a complete list of clusters must be specified")
         
-        # Reset 
         if value > 0 and value < 1:
             value = value * self.countForClusters(*fromClusters)
             value = int(round(value))

@@ -1,6 +1,6 @@
 from PyQt5.Qt import QStandardItemModel
-from PopulationMetrics import *
-from MashMap import MashMap
+from Objects import PopulationMetrics as PM
+from Objects import MashMap
 
 # TODO: cache results of frequently-used queries to improve performance?
 
@@ -11,24 +11,10 @@ class PopulationModel(QStandardItemModel):
 
         # If no input, create a new blank population
         if popData is None:
-            self.data = MashMap(POP_METRIC_SPECIES, POP_METRIC_NATIONALITY, POP_METRIC_EMPLOYMENT, POP_METRIC_SOCIOECO, POP_METRIC_AGE, POP_METRIC_BELIEFS, POP_METRIC_APPROVAL)
+            self.data = MashMap.MashMap(PM.POP_METRIC_SPECIES, PM.POP_METRIC_NATIONALITY, PM.POP_METRIC_EMPLOYMENT, PM.POP_METRIC_SOCIOECO, PM.POP_METRIC_AGE, PM.POP_METRIC_BELIEFS, PM.POP_METRIC_APPROVAL)
         # Create population with pre-made mashmap
         elif isinstance(popData, MashMap):
             self.data = popData
-        # Create a new full-random population
-        elif popData == 'r':
-            fullRandomParameters = [1, [1, 1, 1, 1, 1, 1],
-                                       [1, 1, 1, 1, 1, 1],
-                                       [1, 1, 1, 1, 1, 1, 1, 1, 1],
-                                       [1, 1, 1, 1, 1, 1],
-                                       [1, 1, 1, 1, 1, 1, 1],
-                                       [1, 1, 1, 1, 1, 1, 1, 1, 1],
-                                       [1, 1]
-                                    ]
-            self.data = self.newRandomMashMap(fullRandomParameters)
-        # Generate new population mashmap using given parameters
-        elif isinstance(popData[0], list):
-            self.data = self.newRandomMashMap(popData)
 
     def setValueForClusters(self, value, *clusters):
         self.data.setValueForClusters(value, *clusters)
@@ -59,8 +45,3 @@ class PopulationModel(QStandardItemModel):
                 migrateTargetKey[targetIndex] = i
                 self.migrateValuesForClusters(migrateAmount)
     """
-        
-
-    # Parameters is a tuple. The first element 
-    def newRandomMashMap(self, parameters):
-        return MashMap(POP_METRIC_SPECIES, POP_METRIC_NATIONALITY, POP_METRIC_EMPLOYMENT, POP_METRIC_SOCIOECO, POP_METRIC_AGE, POP_METRIC_BELIEFS, POP_METRIC_APPROVAL)

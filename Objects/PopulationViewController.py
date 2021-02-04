@@ -18,7 +18,7 @@ class PopulationViewController(QDialog):
     def generateDataForMetric(self, metric):
         data = []
         for cluster in metric:
-            count = self.populationModel.countForMetrics(cluster)
+            count = self.populationModel.countForClusters(cluster)
             if count > 0:
                 data.append([cluster.name, count])
 
