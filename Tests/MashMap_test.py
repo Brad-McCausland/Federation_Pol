@@ -243,16 +243,16 @@ class MashMapTests(unittest.TestCase):
 
     def test_generate_cluster_sets_from_clusters(self):
         mashmap = MashMap.MashMap(ENUM_SPECIES)
-        self.assertTrue(mashmap.completeClusterSetforClusters(ENUM_SPECIES.CARDASSIAN) == [[ENUM_SPECIES.CARDASSIAN]])
+        self.assertTrue(mashmap.completeClusterSetForClusters(ENUM_SPECIES.CARDASSIAN) == [[ENUM_SPECIES.CARDASSIAN]])
         
         mashmap = MashMap.MashMap(ENUM_SPECIES, ENUM_JOB)
-        set1 = mashmap.completeClusterSetforClusters(ENUM_SPECIES.BAJORAN)
+        set1 = mashmap.completeClusterSetForClusters(ENUM_SPECIES.BAJORAN)
         self.assertTrue([ENUM_SPECIES.BAJORAN, ENUM_JOB.CHEF] in set1)
         self.assertTrue([ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC] in set1)
         self.assertTrue([ENUM_SPECIES.BAJORAN, ENUM_JOB.WARRIOR] in set1)
         self.assertTrue([ENUM_SPECIES.BAJORAN, ENUM_JOB.ADMIN] in set1)
 
-        set2 = mashmap.completeClusterSetforClusters(ENUM_JOB.VEDEC)
+        set2 = mashmap.completeClusterSetForClusters(ENUM_JOB.VEDEC)
         self.assertTrue(len(set2) == 4)
         self.assertTrue([ENUM_SPECIES.TALAXIAN, ENUM_JOB.VEDEC] in set2)
         self.assertTrue([ENUM_SPECIES.BAJORAN, ENUM_JOB.VEDEC] in set2)
@@ -261,7 +261,7 @@ class MashMapTests(unittest.TestCase):
 
 
         mashmap = MashMap.MashMap(ENUM_SPECIES, ENUM_FOOD, ENUM_JOB)
-        set3 = mashmap.completeClusterSetforClusters(ENUM_FOOD.GAGH)
+        set3 = mashmap.completeClusterSetForClusters(ENUM_FOOD.GAGH)
 
         self.assertTrue(len(set3) == 16)
         self.assertTrue([ENUM_SPECIES.TALAXIAN, ENUM_FOOD.GAGH, ENUM_JOB.CHEF] in set3)
